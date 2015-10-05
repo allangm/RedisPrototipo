@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html ng-app = myApp>
+	<head>
+		<title>VS Zone</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<!-- Dependencias de la aplicacion -->
+		<script src="../assets/js/jquery.min.js"></script>
+		<script src="../assets/js/jquery.scrolly.min.js"></script>
+		<script src="../assets/js/jquery.scrollzer.min.js"></script>
+		<script src="../assets/js/skel.min.js"></script>
+		<script src="../assets/js/skel-layers.min.js"></script>
+		<script src="../assets/js/init.js"></script>
+		<link rel="stylesheet" href="../assets/css/listo.css" />
+		<noscript>
+			<link rel="stylesheet" href="../assets/css/skel.css" />
+			<link rel="stylesheet" href="../assets/css/style.css" />
+			<link rel="stylesheet" href="../assets/css/style-wide.css" />
+			<link rel="stylesheet" href="../assets/css/style-show.css">
+	    </noscript>
+	</head>
+	<body ng-controller="indexController">
+		<!-- Descripcion de la aplicacion -->
+		<div id="header" class="skel-layers-fixed">
+			<div >
+					<!-- Puede ir la imagen del usuario -->
+					<div ng-show="verUsuarios">
+						<p ALIGN=CENTER>Hola: {{USER}}</p>
+						<nav id="nav">
+							<ul>
+								<li><a ng-click= "mostrarVotacion()" href="javascript: void(0)" class="skel-layers-ignoreHref"><span>... Ver Votaciones ... </span></a></li>
+							</ul>
+						</nav>	
+						<p ALIGN=CENTER>Conectados:</p>
+						<ul>
+						  	<li ALIGN=CENTER ng-repeat="online in ONLINE_USERS">{{online.username}}</li>
+					  	</ul>
+					</div>
+
+					<!-- Menu de la aplicacion -->
+					<nav id="nav" ng-show="verMenu">
+						<ul>
+							<li><a ng-click= "mostrarSesion()" href="javascript: void(0)" class="skel-layers-ignoreHref"><span class="icon fa-user">Iniciar Sesion</span></a></li>
+							<li><a ng-click= "mostrarRegistro()" href="javascript: void(0)" class="skel-layers-ignoreHref"><span class="icon fa-user">Registrarse</span></a></li>
+						</ul>
+					</nav>		
+			</div>
+		</div>
+		<!-- Secciones de la pagina-->
+		<div id="main">
+			<!-- Seccion de registro de usuario-->
+			<section id="contact" class="four" ng-show="verRegistro">
+				<div class="container" >
+					<header>
+					    <h2>Registrese y vote</h2>
+					</header>
+					<div>
+				  		<form ng-submit="registrarUsuario()">
+					  		<input type="text" placeholder="Usuario"      ng-model="modUsuario" required></input>
+					  		<br><br>
+					  		<input type="password" placeholder="Contraseña"  ng-model="modPassword" required></input>
+					  		<br><br>
+					  		<input type="password" placeholder=" Confirmar Contraseña" ng-model="modVerPassword" required></input>
+					  		<br><br>
+				  			<button type="submit">Aceptar</button>
+				  		</form>
+				    </div>
+				</div>
+			</section>
+			<!-- Seccion de inicio de sesion -->
+			<section id="portfolio" class="two" ng-show="verSesion">
+				<div class="container">
+					<header>
+						<h2>Iniciar sesión</h2>
+					</header>
+					<div>
+				  		<form ng-submit="iniciarSesion()">
+				  			<input type="text" placeholder="Usuario"     ng-model="modLoginUser" required></input>
+				  			<br><br>
+				  			<input type="text" placeholder="Contraseña"  ng-model="modLoginPass" required></input>
+				  			<br><br>
+				  			<button class="boton" type="submit">Aceptar</button>
+				  		</form>
+				    </div>
+				</div>
+			</section>
+			<!-- Seccion de historial de mensajes-->
+			<section id="about" class="three" ng-show="verVotacion">
+				<div class="container">
+				    <header>
+						<h2 class="alt">Votaciones</h2>	
+					</header>
+					<form ng-submit="agregarVoto()" >
+					<ul>
+						<li>{{nombreVersus.split(' vs ')[0]}}: {{votosparte1}} </li>
+						<li>{{nombreVersus.split(' vs ')[1]}}: {{votosparte2}} </li>
+					</ul>
+						<button ng-click="parteEscogida=nombreVersus.split(' vs ')[0]" type="submit">Votar por {{nombreVersus.split(' vs ')[0]}}</button>
+						<button ng-click="parteEscogida=nombreVersus.split(' vs ')[1]" type="submit">Votar por {{nombreVersus.split(' vs ')[1]}}</button>
+				    </form>
+
+				</div>
+			</section>
+			<!-- Seccion de presentacion-->
+			<section id="about" class="three" ng-show="verPortada">
+				<div class="container">
+				    <header>
+						<h2 class="alt">VS ZONE</h2>	
+					</header>
+					<form >
+						<IMG SRC="../assets/images/notas.jpg" BORDER=0>
+						<h2 class="alt">Bienvenido a VS Zone donde puede opinar sobre sus preferencias!!!</h2>	
+						<h2 class="alt">Vote y aliente a los demás a votar por su favorito!!</h2>	
+				    </form>
+				</div>
+			</section>
+            <!-- Seccion principal del programa-->
+			<section id="top" class="one dark cover" ng-show="verInicio">
+				<div class="container">
+                    <header>
+						<h2 class="alt">Crea un nuevo Versus</h2>
+					</header>
+					<div>
+						<span>Existen {{versusActuales()}} de {{listaVersus.length}} Versus !</span>
+						<ul class="unstyled">
+						    <li ALIGN=LEFT ng-repeat="versusAc in listaVersus">
+						    	<input ng-click="actualizarTareas($index, versusAc.name)" type="checkbox" ng-model="" required>
+						        <span class="">{{versusAc.name}} (por {{versusAc.emisor}})</span>
+						    </li>
+						</ul>
+				    </div>
+					<form ng-submit="agregarVersus()">
+					    <input type="text" placeholder="Escriba nombre del nuevo Versus..." ng-model="modVersus"></input>
+						<button type="submit">Nuevo Versus</button>
+				    </form>
+				    <br><br>
+					<form ng-submit="enviarComentario()">
+						<h2 class="alt">Comentarios</h2>
+						<textarea readonly type="text" ng-model="mensajesChat"></textarea>
+						<br><br>
+						<input type="text" placeholder="Escriba el mensaje..." ng-model="modMensajeEnviar" required></input>
+						<button type="submit">Hacer Comentario</button>
+				    </form>
+                </div>
+			</section>
+		</div>
+		<!-- Footer -->
+		<div id="footer">
+		<!-- Copyright -->
+			<ul class="copyright">
+				<li>&copy; TEC. Bases II 2015.</li>
+			</ul>		
+		</div>
+		<!-- Dependencias de la aplicacion -->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+	    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-resource.js"></script>   
+	    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> 
+	    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-animate.min.js"></script>
+	    <script src="https://cdn.socket.io/socket.io-1.3.4.js"></script>
+        <script type="text/javascript" src="/app.js"></script>
+        <script type="text/javascript" src="../controladorescliente/controladores.js"></script>
+	</body>
+</html>
